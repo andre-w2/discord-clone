@@ -20,3 +20,9 @@ NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/
 ```bash
 DATABASE_URL="mysql://root:root@localhost/discord?schema=public"
 ```
+
+#4 Подключение [uploadthing](https://uploadthing.com)
+```bash
+UPLOADTHING_SECRET=xxxx
+UPLOADTHING_APP_ID=xxx
+```
