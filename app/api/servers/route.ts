@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 import { currentProfile } from "@/lib/current-profile"
 import { NextResponse } from "next/server"
 import { db } from '@/lib/db'
@@ -17,6 +19,7 @@ export async function POST(req: Request) {
                 profileId: profile.id,
                 name,
                 imageUrl,
+                inviteCode: uuidv4(),
                 channels: {
                     create: [
                         { name: "general", profileId: profile.id }
