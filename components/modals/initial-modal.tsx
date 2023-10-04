@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { FileUpload } from "@/components/file-upload";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -36,11 +38,12 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 export const InitialModal = () => {
-  const [isMounted, setIsMounted] = useState(false)
+  const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    setIsMounted(true)
-  }, [])
+    setIsMounted(true);
+  }, []);
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -53,11 +56,19 @@ export const InitialModal = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit: SubmitHandler<FormSchema> = async (values: FormSchema) => {
-    console.log(values);
+    try {
+      await axios.post("/api/servers", values);
+
+      form.reset();
+      router.refresh()
+      window.location.reload()
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  if(!isMounted) {
-    return null
+  if (!isMounted) {
+    return null;
   }
 
   return (
@@ -75,10 +86,10 @@ export const InitialModal = () => {
                 <FormField
                   control={form.control}
                   name="imageUrl"
-                  render={({field}) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <FileUpload 
+                        <FileUpload
                           endPoint="serverImage"
                           value={field.value}
                           onChange={field.onChange}
@@ -99,6 +110,7 @@ export const InitialModal = () => {
                     </FormLabel>
                     <FormControl>
                       <Input
+                        type="text"
                         disabled={isLoading}
                         className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                         placeholder="Enter server name"
