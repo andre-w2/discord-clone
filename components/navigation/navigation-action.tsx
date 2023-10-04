@@ -1,8 +1,8 @@
 "use client";
 
-import { PlusIcon } from "@radix-ui/react-icons";
 import { ActionTooltip } from "@/components/action-tooltip";
 import { useModal } from "@/hooks/use-modal-store";
+import { PlusIcon } from "lucide-react";
 
 const NavigationAction = () => {
 const { onOpen } = useModal()
