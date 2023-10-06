@@ -1,4 +1,6 @@
-import qs from 'query-string'
+"use client";
+
+import qs from "query-string";
 import axios from "axios";
 import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -24,7 +26,14 @@ import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
 import { ChannelType } from "@prisma/client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   name: z
@@ -41,19 +50,28 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 export const CreateChannelModal = () => {
-  const { isOpen, onClose, type } = useModal();
+  const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
-  const params = useParams()
+  const params = useParams();
 
   const isModalOpen = isOpen && type === "createChannel";
+  const { channelType } = data;
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      type: ChannelType.TEXT
+      type: channelType || ChannelType.TEXT,
     },
   });
+
+  useEffect(() => {
+    if (channelType) {
+      form.setValue("type", channelType);
+    } else {
+      form.setValue("type", ChannelType.TEXT);
+    }
+  }, [channelType, form]);
 
   const isLoading = form.formState.isSubmitting;
 
@@ -62,10 +80,10 @@ export const CreateChannelModal = () => {
       const url = qs.stringifyUrl({
         url: "/api/channels",
         query: {
-          serverId: params?.serverId
-        }
+          serverId: params?.serverId,
+        },
       });
-      await axios.post(url, values)
+      await axios.post(url, values);
 
       form.reset();
       router.refresh();
@@ -113,13 +131,17 @@ export const CreateChannelModal = () => {
                   </FormItem>
                 )}
               />
-              <FormField 
+              <FormField
                 control={form.control}
                 name="type"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Channel Type</FormLabel>
-                    <Select disabled={isLoading} onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      disabled={isLoading}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger className="bg-zinc-300/50 border-0 focus:ring-0 text-black ring-offset-0 focus:ring-offset-0 capitalize outline-none">
                           <SelectValue placeholder="Select a channel type" />
@@ -127,7 +149,11 @@ export const CreateChannelModal = () => {
                       </FormControl>
                       <SelectContent>
                         {Object.values(ChannelType).map((type) => (
-                          <SelectItem key={type} value={type} className="capitalize">
+                          <SelectItem
+                            key={type}
+                            value={type}
+                            className="capitalize"
+                          >
                             {type.toLowerCase()}
                           </SelectItem>
                         ))}

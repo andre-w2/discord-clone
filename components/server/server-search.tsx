@@ -26,14 +26,14 @@ interface ServerSearchProps {
   }[];
 }
 
-const ServerSearch = ({ data }: ServerSearchProps) => {
+export const ServerSearch = ({ data }: ServerSearchProps) => {
   const [open, setOpen] = useState(false);
-  const router = useRouter()
-  const params = useParams()
+  const router = useRouter();
+  const params = useParams();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "k" || e.metaKey || e.ctrlKey) {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
@@ -44,17 +44,23 @@ const ServerSearch = ({ data }: ServerSearchProps) => {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  const onClick = ({ id, type }: { id: string, type: "channel" | "member" }) => {
-    setOpen(false)
+  const onClick = ({
+    id,
+    type,
+  }: {
+    id: string;
+    type: "channel" | "member";
+  }) => {
+    setOpen(false);
 
-    if(type === 'channel') {
-        return router.push(`/servers/${params?.serverId}/channel/${id}`)
+    if (type === "channel") {
+      return router.push(`/servers/${params?.serverId}/channel/${id}`);
     }
 
-    if(type === 'member') {
-        return router.push(`/servers/${params?.serverId}/conversations/${id}`)
+    if (type === "member") {
+      return router.push(`/servers/${params?.serverId}/conversations/${id}`);
     }
-  }
+  };
 
   return (
     <>
@@ -81,7 +87,10 @@ const ServerSearch = ({ data }: ServerSearchProps) => {
               <CommandGroup key={label} heading={label}>
                 {data?.map(({ id, name, icon }) => {
                   return (
-                    <CommandItem key={id} onSelect={() => onClick({ id, type })}>
+                    <CommandItem
+                      key={id}
+                      onSelect={() => onClick({ id, type })}
+                    >
                       {icon}
                       <span>{name.replace("null", "")}</span>
                     </CommandItem>
@@ -95,5 +104,3 @@ const ServerSearch = ({ data }: ServerSearchProps) => {
     </>
   );
 };
-
-export default ServerSearch;
