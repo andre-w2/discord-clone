@@ -53,7 +53,7 @@ export const EditChannelModal = () => {
   const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
 
-  const isModalOpen = isOpen && type === "changeChannel";
+  const isModalOpen = isOpen && type === "editChannel";
   const { channel, server } = data;
 
   const form = useForm<FormSchema>({
@@ -64,7 +64,7 @@ export const EditChannelModal = () => {
     },
   });
 
-  useEffect(() => {
+  useEffect(() => { 
     if (channel) {
       form.setValue("name", channel.name);
       form.setValue("type", channel.type);
@@ -101,7 +101,7 @@ export const EditChannelModal = () => {
       <DialogContent className="bg-white text-black p-0 overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-2xl text-center font-bold">
-            Create channel
+            Edit channel
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
